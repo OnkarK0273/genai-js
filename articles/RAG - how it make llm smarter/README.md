@@ -1,82 +1,106 @@
-# How RAG Makes LLMs Smarter
+# What is the RAG?
 
-## What is RAG?
+it retrieved relevant information from the external source such as doc, DB, Website and using LLM it generates the answer based on retrieved data.
 
-**Retrieval-Augmented Generation (RAG)** is a process that retrieves relevant information from external sources—such as documents, databases, or websites—and uses an LLM to generate answers based on that retrieved data.
+# What RAG solves problems?
 
-## Problems RAG Solves
+## 1\. Hallucination
 
-### 1. Hallucination
+LLMs sometimes generate **confident but incorrect answers** because:
 
-LLMs sometimes generate confident but incorrect answers because they are trained on static data and often try to "fill in the blanks" even when they lack specific knowledge.
+- They're trained on static data
+- They try to "fill in the blanks" even if they don't know
 
-- **How RAG helps:** It grounds the LLM's answers in actual facts by retrieving real, relevant information from external sources.
+**🛠 How RAG helps**:
 
-### 2. Outdated Knowledge
+By retrieving real, relevant information from external sources, RAG grounds the LLM's answers in actual facts, reducing hallucinations.
 
-LLMs have a training cutoff (e.g., 2023) and cannot know about events or information published after that point.
+## 2\. Outdated Knowledge
 
-- **How RAG helps:** It pulls the latest data from company knowledge bases, documentation, and recent articles.
+LLMs like GPT-3.5 or GPT-4 were trained on data that stops at a certain point (e.g., 2023). They **can’t know things published after that.**
 
-### 3. Limited Context Window
+**🛠 How RAG helps**:
 
-LLMs can only process a limited amount of text at once (the context window). Cramming too much information results in data being cut off.
+RAG pulls the latest data from sources like:
 
-- **How RAG helps:** Instead of sending an entire database, RAG finds only the most relevant parts and sends them along with the query.
+- Company knowledge bases
+- Documentation
+- Recent articles
+- Your personal notes
+
+## 3\. Limited Context Window
+
+LLMs can only “see” a limited amount of text at once (context window, like 8k–128k tokens). If you try to cram too much, important parts get cut off.
+
+**🛠 How RAG helps**:
+
+Instead of sending the whole database or document, RAG:
+
+- Finds only the **most relevant parts**
+- Sends them along with the query
+
+# **How does basic Retrieval-Augmented Generation work?**
+
+![](https://cdn.hashnode.com/res/hashnode/image/upload/v1745080917219/d4188f2f-6169-4fa2-bf45-e0e3d1a5282c.png)
+
+## indexing phase
+
+![](https://cdn.hashnode.com/res/hashnode/image/upload/v1745080948004/3420f301-fb8c-4c02-ba2e-e4b11b7d7b2c.png)
+
+### 1\. Chunking
+
+- chunking means splitting long document into small parts (chunk)
+- chunking is necessary it improves your retrieval accuracy.
+
+common and useful ways to chunk documents in a RAG system:
+
+| **Chunking Method** | **Best For**                       |
+| ------------------- | ---------------------------------- |
+| Fixed-Length        | Quick start, short texts           |
+| Sliding Window      | Better context in chunks           |
+| Sentence-Based      | Articles, readable content         |
+| Paragraph-Based     | Manuals, essays                    |
+| Semantic Chunking   | When high accuracy is needed       |
+| Header-Based        | Structured docs, technical content |
+| Tokenizer-Based     | LLM-ready chunks by default        |
+
+### 2\. Embedding
+
+- it is a vector (list of number) that represent meaning of word, sentence, paragraph in way that machine can understand.
+
+  ```python
+  "happy" → [0.21, -0.11, 0.56, ...]
+  ```
+
+### 3\. Vector DB
+
+- it stores the vectors of embedded chunks
+- Later, given a **query**, find the **most similar chunks** based on **semantic meaning**, not keywords
+
+## Retrieval phase
+
+![](https://cdn.hashnode.com/res/hashnode/image/upload/v1745080968635/a0fc4bd7-dcdf-42fd-83e9-24030244ad82.png)
+
+### 4\. Semantic Search
+
+- That query is turned into a vector using an embedding model.
+- **Vector Search**: The vector is compared to a set of document embeddings stored in a vector database and most similar documents (top-k) are retrieved based on cosine similarity.
+- The smaller the distance or higher the similarity → the more relevant the chunk.
+
+## Generation phase
+
+![](https://cdn.hashnode.com/res/hashnode/image/upload/v1745081002049/ddee6e0a-2370-462f-94c8-3f97174bd40c.png)
+
+### 5\. Generation
+
+- After retrieving the most relevant chunks using **semantic search**, the **generation phase** uses those chunks as **context** to answer the user’s question.
+
+  ```python
+  User Question + Retrieved Chunks → Prompt → GPT → Final Answer
+  ```
 
 ---
 
-## The RAG Pipeline
+Learned something? Hit the ❤️ to say “thanks!” and help others discover this article.
 
-### Indexing Phase
-
-The indexing phase prepares external documents for retrieval.
-
-1.  **Chunking:** Splitting long documents into smaller parts (chunks) to improve retrieval accuracy.
-
-    | Chunking Method   | Best For                           |
-    | :---------------- | :--------------------------------- |
-    | Fixed-Length      | Quick start, short texts           |
-    | Sliding Window    | Better context in chunks           |
-    | Sentence-Based    | Articles, readable content         |
-    | Paragraph-Based   | Manuals, essays                    |
-    | Semantic Chunking | When high accuracy is needed       |
-    | Header-Based      | Structured docs, technical content |
-    | Tokenizer-Based   | LLM-ready chunks by default        |
-
-2.  **Embedding:** Converting text into a vector (a list of numbers) that represents its meaning so a machine can understand it.
-3.  **Vector DB:** A database that stores these embedded chunks.
-
-### Retrieval Phase
-
-When a user submits a query, the system finds the most similar chunks based on semantic meaning rather than just keywords.
-
-- **Semantic Search:** The query is turned into a vector using an embedding model.
-- **Vector Search:** The query vector is compared to stored document embeddings using **cosine similarity**.
-- **Relevance:** A smaller distance or higher similarity score indicates a more relevant chunk.
-
-### Generation Phase
-
-The final stage where the LLM produces a response.
-
-- The most relevant chunks are used as context for the user's question.
-- **Formula:** User Question + Retrieved Chunks → Prompt → GPT.
-
----
-
-## Advanced RAG Techniques
-
-### Query Translation (Query Decomposition)
-
-This advanced technique involves breaking down a complex problem into multiple sub-problems to improve document retrieval.
-
-- **Parallel Decomposition:** Handling sub-queries simultaneously.
-- **Iterative Decomposition:** Handling sub-queries step-by-step.
-
-### Query Translation (Query Re-writing)
-
-Techniques used to transform a query for better results:
-
-- **Multi-Query:** Generating multiple versions of a query.
-- **RAG Fusion:** Re-ranking search results.
-- **HyDE (Hypothetical Document Embeddings):** Generating a hypothetical answer to improve retrieval.
+**Check out** [**my blog**](https://onkark.hashnode.dev/series/genai-devlopment) **for more things related GenAI**
