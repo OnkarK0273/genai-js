@@ -15,7 +15,7 @@ const splitter = new RecursiveCharacterTextSplitter({
   chunkSize: 250,
   chunkOverlap: 50,
 });
-const texts = await splitter.splitDocuments(docs);
+const split_doc = await splitter.splitDocuments(docs);
 
 // step 2 - embedding
 
@@ -31,7 +31,7 @@ const vectorStore = await QdrantVectorStore.fromExistingCollection(embeddings, {
 });
 
 // add document in db
-await vectorStore.addDocuments(texts);
+// await vectorStore.addDocuments(split_doc);
 
 // Retreival phase --------------------------------------------
 
@@ -42,6 +42,7 @@ const query = "what is  AI Generalist";
 const similaritySearchResults = await vectorStore.similaritySearch(query);
 
 let context = "";
+
 for (let i = 0; i < similaritySearchResults.length; i++) {
   context += similaritySearchResults[i].pageContent;
 }
@@ -66,4 +67,4 @@ const model = new ChatGroq({
 
 const res = await model.invoke(messages);
 
-console.log(res.content);
+console.log("AI Message", res.content);
