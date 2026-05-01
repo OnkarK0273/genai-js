@@ -1,8 +1,8 @@
 import { ChatGroq } from "@langchain/groq";
 import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
 import { QdrantVectorStore } from "@langchain/qdrant";
-import { ChatPromptTemplate } from '@langchain/core/prompts';
-import { StringOutputParser } from '@langchain/core/output_parsers';
+import { ChatPromptTemplate } from "@langchain/core/prompts";
+import { StringOutputParser } from "@langchain/core/output_parsers";
 
 // --- Multi-query generation prompt ---
 const multiQueryTemplate = `
@@ -40,7 +40,6 @@ const generateQueriesChain = multiQueryPrompt
   .pipe(modelWithStruture)
   .pipe((output) => Object.values(output));
 
-
 const embeddings = new GoogleGenerativeAIEmbeddings({
   model: "gemini-embedding-001",
 });
@@ -52,18 +51,18 @@ const vectorStore = await QdrantVectorStore.fromExistingCollection(embeddings, {
   collectionName: "genai-toolkit",
 });
 
-const retriever = vectorStore.asRetriever()
+const retriever = vectorStore.asRetriever();
 
 // --- Utility: Unique union of retrieved documents ---
 function getUniqueUnion(documents) {
   const flattenedDocs = documents.flat();
-  
-  // Use a Map to track unique content. 
+
+  // Use a Map to track unique content.
   // If a duplicate pageContent appears, the Map just overwrites the entry,
   // effectively keeping only one instance.
   const uniqueMap = new Map();
-  
-  flattenedDocs.forEach(doc => {
+
+  flattenedDocs.forEach((doc) => {
     // You can use doc.pageContent or a specific metadata field here
     uniqueMap.set(doc.pageContent, doc);
   });
@@ -71,18 +70,17 @@ function getUniqueUnion(documents) {
   return Array.from(uniqueMap.values());
 }
 
-
 // --- Retrieval chain ---
 const retrievalChain = generateQueriesChain
   .pipe(async (queries) => {
     const results = await Promise.all(
-      queries.map((query) => retriever.invoke(query))
+      queries.map((query) => retriever.invoke(query)),
     );
     return results;
   })
   .pipe((documents) => getUniqueUnion(documents));
 
-  // --- Prompt for final answer ---
+// --- Prompt for final answer ---
 const answerTemplate = `Answer the following question based on this context:
 {context}
 Question: {question}
@@ -102,7 +100,7 @@ const finalRagChain = async (input) => {
 
 // --- Run the chain ---
 (async () => {
-  const userQuestion = 'what is AI generalist';
+  const userQuestion = "what is AI generalist";
   const answer = await finalRagChain({ question: userQuestion });
-  console.log('Final answer:', answer);
+  console.log("Final answer:", answer);
 })();
