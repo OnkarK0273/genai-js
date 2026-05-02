@@ -4,16 +4,7 @@ import { QdrantVectorStore } from "@langchain/qdrant";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 
-const templateDecomposition = `You are a helpful assistant that generates multiple sub-questions related to an input question. \n
-The goal is to break down the input into a set of sub-problems / sub-questions that can be answers in isolation. \n
-Generate multiple search queries related to: {question} \n
-note: generate only queries
-Output (only 3 queries):`;
-
-const promptDecomposition = ChatPromptTemplate.fromTemplate(
-  templateDecomposition,
-);
-
+// --- LLM and Embedding setup ---
 const model = new ChatGroq({
   model: "openai/gpt-oss-20b",
 });
@@ -37,18 +28,28 @@ const modelWithStruture = model.withStructuredOutput(querySchema, {
   method: "jsonSchema",
 });
 
-// --- Query Generation Chain ---
-const generateQueriesChain = promptDecomposition
-  .pipe(modelWithStruture)
-  .pipe((output) => Object.values(output));
-
-// ---- vectore store ----
 const vectorStore = await QdrantVectorStore.fromExistingCollection(embeddings, {
   url: process.env.QDRANT_URL,
   collectionName: "genai-toolkit",
 });
 
 const retriever = vectorStore.asRetriever();
+
+// --- Query-decomposition generation prompt ---
+const templateDecomposition = `You are a helpful assistant that generates multiple sub-questions related to an input question. \n
+The goal is to break down the input into a set of sub-problems / sub-questions that can be answers in isolation. \n
+Generate multiple search queries related to: {question} \n
+note: generate only queries
+Output (only 3 queries):`;
+
+const promptDecomposition = ChatPromptTemplate.fromTemplate(
+  templateDecomposition,
+);
+
+// --- Query Generation Chain ---
+const generateQueriesChain = promptDecomposition
+  .pipe(modelWithStruture)
+  .pipe((output) => Object.values(output));
 
 // --- Retrieved sub-question answer generation prompt ---
 const retrievedTemplate = `
