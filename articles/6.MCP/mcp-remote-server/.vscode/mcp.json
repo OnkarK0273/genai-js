@@ -1,0 +1,9 @@
+{
+  "servers": {
+    "student-remote-mcp": {
+      "url": "https://bulge-probing-shifting.ngrok-free.dev/mcp",
+      "type": "sse"
+    }
+  },
+  "inputs": []
+}
