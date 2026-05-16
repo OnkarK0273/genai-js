@@ -1,5 +1,4 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { StreamableHTTPTransport } from "@hono/mcp";
 import {
   GetPromptResult,
   ReadResourceResult,
@@ -10,8 +9,6 @@ const server = new McpServer({
   name: "Student",
   version: "1.0.0",
 });
-
-const transport = new StreamableHTTPTransport();
 
 server.registerResource(
   "greeting-resource",
@@ -170,4 +167,4 @@ server.registerTool(
   },
 );
 
-export { server, transport };
+export { server };
