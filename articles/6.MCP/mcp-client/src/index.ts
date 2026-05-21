@@ -94,9 +94,8 @@ class MCPClient {
     const finalText = [];
 
     const choise = response.choices[0];
-    console.log("choices", choise);
+
     const assistantMessage = choise?.message;
-    console.log("assistantMessage", assistantMessage);
 
     if (assistantMessage?.content) {
       finalText.push(assistantMessage.content);
@@ -110,8 +109,6 @@ class MCPClient {
 
       for (const toolCalls of assistantMessage.tool_calls) {
         if (toolCalls.type !== "function") continue;
-
-        console.log("toolCalls", toolCalls);
 
         const toolName = toolCalls.function.name;
 
@@ -130,8 +127,6 @@ class MCPClient {
           content: JSON.stringify(result.content),
         });
       }
-
-      console.log("messages", messages);
 
       const followupResponse = await this.groq.chat.completions.create({
         model: "openai/gpt-oss-120b",
