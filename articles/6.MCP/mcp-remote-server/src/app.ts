@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { server } from "./mcp"; // Your MCP server instance
+import { server } from "."; // Your MCP server instance
 import { serve } from "@hono/node-server";
 import { StreamableHTTPTransport } from "@hono/mcp";
 
