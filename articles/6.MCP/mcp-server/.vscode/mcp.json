@@ -1,0 +1,10 @@
+{
+  "servers": {
+    "my-mcp-server-39dd0f0a": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["dist/index.js"]
+    }
+  },
+  "inputs": []
+}
