@@ -12,6 +12,7 @@ To build an LLM agent capable of answering real-time questions, you can combine 
 - **State Management**: The application executes the Tavily search, extracts relevant webpage content chunks, maps them to a role type of `"tool"`, and pushes the result back into the `messgaeHistory` array. The model processes this newly appended context and generates the final answer.
 
 ```tsx
+// smart-agent/tool-calling.ts
 import { Config } from "./config/index.js";
 import Groq from "groq-sdk";
 import { tavily } from "@tavily/core";
@@ -114,6 +115,7 @@ To upgrade the tool-calling workflow into a continuous chat experience, you can 
 - **Contextual Anchor**: Providing a dynamic date variable (`new Date().toUTCString()`) inside the system prompt lets the model calculate relative temporal requests accurately (such as "yesterday" or "this week") across multiple turns of conversation.
 
 ```tsx
+// smart-agent/terminal-chatbot.ts
 import { Config } from "./config/index.js";
 import Groq from "groq-sdk";
 import { tavily } from "@tavily/core";

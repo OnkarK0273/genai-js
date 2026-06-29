@@ -7,7 +7,7 @@ To master programmatic control over Large Language Models (LLMs), you must first
 The primary mechanism for generating completions is the `groq.chat.completions.create` runtime call. Here, you explicitly declare your processing model target—such as `llama-3.1-8b-instant`—and pass an array of conversational messages containing the user payload.
 
 ```tsx
-// src/simple_completion.ts
+// getting-started/simple_completion.ts
 import { Config } from "./config/index.js";
 import Groq from "groq-sdk";
 
@@ -42,7 +42,7 @@ System prompts act as fundamental behavioral guardrails for an LLM before the us
 In this implementation, the system prompt defines the context and persona boundaries: instructing the model that it specializes exclusively in categorical sentiment analysis. When the user role provides a raw review string, the model is already bound to those systemic behavioral rules.
 
 ```tsx
-// src/system_prompt.ts
+// getting-started/system_prompt.ts
 import { Config } from "./config/index.js";
 import Groq from "groq-sdk";
 
@@ -90,7 +90,7 @@ To achieve fine-grained control over model output predictability, length, and to
 Modifying these parameters alters the deterministic nature of your completion streams:
 
 ```typescript
-// src/tuned_completion.ts
+// getting-started/tuned_completion.ts
 import { Config } from "./config/index.js";
 import Groq from "groq-sdk";
 
@@ -118,4 +118,4 @@ async function execution_pipeline() {
 
 # Next Articles in This Series
 
-1. Production-Ready AI: Guaranteeing Structured JSON Outputs
+1. [Production-Ready AI: Guaranteeing Structured JSON Outputs](https://github.com/OnkarK0273/genai-js/tree/main/articles/7.%20Working%20With%20LLM/src/structured-json)

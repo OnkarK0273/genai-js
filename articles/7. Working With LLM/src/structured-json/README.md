@@ -7,6 +7,7 @@ When building production-ready pipelines, applications often require the LLM's r
 To ensure stability in this mode, you must explicitly instruct the model inside the system prompt to output exclusively in JSON and outline the expected keys (`sentiment_analysis`, `sentiment`, `confidence_score`, `key_phrases`, `summary`). Once received, the response content can safely undergo standard `JSON.parse()` transformation.
 
 ```tsx
+// structured-json/json-object.ts
 import { Groq } from "groq-sdk";
 
 const groq = new Groq();
@@ -56,6 +57,7 @@ While JSON Object Mode guarantees that the string layout is valid JSON, it does 
 By passing the evaluated schema structure via `z.toJSONSchema(supportTicketSchema)` into the `json_schema` response format option under `response_format: { type: "json_schema", ... }`, the processing model (such as `moonshotai/kimi-k2-instruct-0905`) is constrained to generate an output matching this architecture. After parsing the text output into a raw JavaScript object, calling `supportTicketSchema.parse(rawResult)` provides static type inference (`z.infer<typeof supportTicketSchema>`) and runtime structural verification.
 
 ```tsx
+// structured-json/zod-schemas.ts
 import Groq from "groq-sdk";
 import { z } from "zod";
 
@@ -135,6 +137,7 @@ For environments where external validation libraries like Zod are not required, 
 By declaring `additionalProperties: false`, the integration explicitly instructs the LLM implementation to omit any additional data outside of the strictly provided schema fields. This enables clean execution tracking for analytical tasks such as evaluating coding questions across metrics like accuracy and passing state.
 
 ```tsx
+// structured-json/json-schema.ts
 import { Config } from "./config/index.js";
 
 import Groq from "groq-sdk";
@@ -215,4 +218,4 @@ llm_calling();
 
 # Next articles in this series
 
-1. Building a Smart Agent: Tool Calling & CLI Chatbots
+1. [Building a Smart Agent: Tool Calling & CLI Chatbots](https://github.com/OnkarK0273/genai-js/tree/main/articles/7.%20Working%20With%20LLM/src/smart-agent)
